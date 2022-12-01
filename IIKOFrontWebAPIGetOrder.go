@@ -10,30 +10,30 @@ import (
 )
 
 const HOST = "http://127.0.0.1:9042"
-const TIMEOUT = 3 * time.Second
+const TIMEOUT = 9 * time.Second
 
 type IIKOOrderInformationSmall struct {
-	ID                 string        `json:"Id"`
-	Amount             float64       `json:"Amount"`
-	Price              float64       `json:"Price"`
-	Cost               float64       `json:"Cost"`
-	Deleted            bool          `json:"Deleted"`
-	PrintTime          time.Time     `json:"PrintTime"`
-	CookingStartTime   time.Time     `json:"CookingStartTime"`
-	CookingFinishTime  time.Time     `json:"CookingFinishTime"`
-	CookingTime        string        `json:"CookingTime"`
-	Size               string   `json:"Size"`
-	ServeTime          time.Time     `json:"ServeTime"`
-	Name               string        `json:"Name"`
-	Product            string        `json:"Product"`
-	Comment            interface{}   `json:"Comment"`
-	Status             int           `json:"Status"`
-	Course             int           `json:"Course"`
-	Modifiers          []string `json:"Modifiers"`
-	IsCompound         bool          `json:"IsCompound"`
-	PrimaryComponent   string   `json:"PrimaryComponent"`
-	SecondaryComponent string   `json:"SecondaryComponent"`
-	Template           string   `json:"Template"`
+	ID                 string      `json:"Id"`
+	Amount             float64     `json:"Amount"`
+	Price              float64     `json:"Price"`
+	Cost               float64     `json:"Cost"`
+	Deleted            bool        `json:"Deleted"`
+	PrintTime          time.Time   `json:"PrintTime"`
+	CookingStartTime   time.Time   `json:"CookingStartTime"`
+	CookingFinishTime  time.Time   `json:"CookingFinishTime"`
+	CookingTime        string      `json:"CookingTime"`
+	Size               string      `json:"Size"`
+	ServeTime          time.Time   `json:"ServeTime"`
+	Name               string      `json:"Name"`
+	Product            string      `json:"Product"`
+	Comment            interface{} `json:"Comment"`
+	Status             int         `json:"Status"`
+	Course             int         `json:"Course"`
+	Modifiers          []string    `json:"Modifiers"`
+	IsCompound         bool        `json:"IsCompound"`
+	PrimaryComponent   string      `json:"PrimaryComponent"`
+	SecondaryComponent string      `json:"SecondaryComponent"`
+	Template           string      `json:"Template"`
 }
 type IIKOOrderInformationFull struct {
 	ID                   string      `json:"Id"`
@@ -53,9 +53,9 @@ type IIKOOrderInformationFull struct {
 	Cashier              string      `json:"Cashier"`
 	Table                string      `json:"Table"`
 	Guests               []struct {
-		ID    string `json:"Id"`
-		Rank  int    `json:"Rank"`
-		Name  string `json:"Name"`
+		ID    string                      `json:"Id"`
+		Rank  int                         `json:"Rank"`
+		Name  string                      `json:"Name"`
 		Items []IIKOOrderInformationSmall `json:"Items"`
 	} `json:"Guests"`
 	IsDeliveryOrder  bool          `json:"IsDeliveryOrder"`
@@ -66,7 +66,7 @@ type IIKOOrderInformationFull struct {
 	URL              string        `json:"Url"`
 }
 
-func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult []IIKOOrderInformationSmall)  {
+func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult []IIKOOrderInformationSmall) {
 
 	var items []IIKOOrderInformationSmall
 	var IIKOOrderInfo []IIKOOrderInformationFull
@@ -74,7 +74,7 @@ func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult []IIKOOrderInfor
 	if err != nil {
 		return nil
 	}
-	if len(IIKOOrderInfo)>0{
+	if len(IIKOOrderInfo) > 0 {
 		for i, _ := range IIKOOrderInfo {
 			for ii, _ := range IIKOOrderInfo[i].Guests {
 				for _, ccc := range IIKOOrderInfo[i].Guests[ii].Items {
@@ -89,8 +89,8 @@ func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult []IIKOOrderInfor
 
 }
 
-func UnlockLicense(key string){
-	url := HOST+"/api/logout/"+key+""
+func UnlockLicense(key string) {
+	url := HOST + "/api/logout/" + key + ""
 	method := "GET"
 
 	client := &http.Client{}
@@ -112,11 +112,11 @@ func UnlockLicense(key string){
 		panic(errors.New("НЕ УДАЛОСЬ ЗАКРЫТЬ КЛЮЧ ДЛЯ IIKO FRONT ПРИ ВОЗНИКНОВЕНИИ ДАЛЬНЕЙШИХ ОШИБОК ПЕРЕЗАПУСТИТЕ КАССУ"))
 	}
 }
-func GetOrderInfo(showNewOrder bool) (orderInfo []IIKOOrderInformationSmall){
-	url := HOST+"/api/login/2050"
+func GetOrderInfo(showNewOrder bool) (orderInfo []IIKOOrderInformationSmall) {
+	url := HOST + "/api/login/2050"
 	method := "GET"
 
-	client := &http.Client {
+	client := &http.Client{
 		Timeout: TIMEOUT,
 	}
 	req, err := http.NewRequest(method, url, nil)
@@ -136,18 +136,18 @@ func GetOrderInfo(showNewOrder bool) (orderInfo []IIKOOrderInformationSmall){
 	if err != nil {
 		panic(errors.New("НЕ УДАЛОСЬ ПОЛУЧИТЬ КЛЮЧ ДЛЯ ПЛАГИНА В IIKO, ПОПРОБУЙТЕ ПРОСКАНИРОВАТЬ ЕЩЕ РАЗ"))
 	}
-	secretKey := strings.Replace(string(body),"\"","",2)
-	if len(secretKey)>0{
+	secretKey := strings.Replace(string(body), "\"", "", 2)
+	if len(secretKey) > 0 {
 		defer UnlockLicense(secretKey)
 		url := ""
 		if showNewOrder {
-			url = HOST+"/api/orders?key="+secretKey+"&$top=1&$orderby=Number%20desc&$filter=Status%20has%20Resto.Front.Api.V5.Data.Orders.OrderStatus%27New%27"
-		} else{
-			url = HOST+"/api/orders?key="+secretKey+"&$top=1&$orderby=Number%20desc&$filter=Status%20has%20Resto.Front.Api.V5.Data.Orders.OrderStatus%27Closed%27"
+			url = HOST + "/api/orders?key=" + secretKey + "&$top=1&$orderby=Number%20desc&$filter=Status%20has%20Resto.Front.Api.V5.Data.Orders.OrderStatus%27New%27"
+		} else {
+			url = HOST + "/api/orders?key=" + secretKey + "&$top=1&$orderby=Number%20desc&$filter=Status%20has%20Resto.Front.Api.V5.Data.Orders.OrderStatus%27Closed%27"
 		}
 		method := "GET"
 
-		client := &http.Client {
+		client := &http.Client{
 			Timeout: TIMEOUT,
 		}
 		req, err := http.NewRequest(method, url, nil)
@@ -169,7 +169,7 @@ func GetOrderInfo(showNewOrder bool) (orderInfo []IIKOOrderInformationSmall){
 		}
 		return ConvertFullIIKOOrderInfoToSmall(string(body))
 
-	} else{
+	} else {
 		panic(errors.New("НЕ УДАЛОСЬ ПОЛУЧИТЬ КЛЮЧ ДЛЯ IIKO FRONT, ПОПРОБУЙТЕ ПРОСКАНИРОВАТЬ ЕЩЕ РАЗ"))
 	}
 }
