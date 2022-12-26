@@ -3,6 +3,7 @@ package IIKOFrontWebAPIGetOrder
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -13,66 +14,91 @@ const HOST = "http://127.0.0.1:9042"
 const TIMEOUT = 9 * time.Second
 
 type IIKOOrderInformationSmall struct {
-	ID                 string      `json:"Id"`
-	Amount             float64     `json:"Amount"`
-	Price              float64     `json:"Price"`
-	Cost               float64     `json:"Cost"`
-	Deleted            bool        `json:"Deleted"`
-	PrintTime          time.Time   `json:"PrintTime"`
-	CookingStartTime   time.Time   `json:"CookingStartTime"`
-	CookingFinishTime  time.Time   `json:"CookingFinishTime"`
-	CookingTime        string      `json:"CookingTime"`
-	Size               string      `json:"Size"`
-	ServeTime          time.Time   `json:"ServeTime"`
-	Name               string      `json:"Name"`
-	Product            string      `json:"Product"`
-	Comment            interface{} `json:"Comment"`
-	Status             int         `json:"Status"`
-	Course             int         `json:"Course"`
-	Modifiers          []string    `json:"Modifiers"`
-	IsCompound         bool        `json:"IsCompound"`
-	PrimaryComponent   string      `json:"PrimaryComponent"`
-	SecondaryComponent string      `json:"SecondaryComponent"`
-	Template           string      `json:"Template"`
+	ID                   string                      `json:"Id"`
+	Number               int                         `json:"Number"`
+	Status               string                      `json:"Status"`
+	FullSum              float64                     `json:"FullSum"`
+	ProcessedPaymentsSum float64                     `json:"ProcessedPaymentsSum"`
+	ResultSum            float64                     `json:"ResultSum"`
+	IsBanquetOrder       bool                        `json:"IsBanquetOrder"`
+	OpenTime             time.Time                   `json:"OpenTime"`
+	BillTime             time.Time                   `json:"BillTime"`
+	WaiterName           string                      `json:"WaiterName"`
+	CashierName          string                      `json:"CashierName"`
+	TableNum             int                         `json:"TableNum"`
+	Waiter               string                      `json:"Waiter"`
+	Cashier              string                      `json:"Cashier"`
+	Table                string                      `json:"Table"`
+	Items                []IIKOOrderInformationItems `json:"Items"`
+}
+type IIKOOrderInformationItems struct {
+	ID                string      `json:"Id"`
+	Amount            float64     `json:"Amount"`
+	Price             float64     `json:"Price"`
+	Cost              float64     `json:"Cost"`
+	Deleted           bool        `json:"Deleted"`
+	PrintTime         time.Time   `json:"PrintTime"`
+	CookingStartTime  time.Time   `json:"CookingStartTime"`
+	CookingFinishTime time.Time   `json:"CookingFinishTime"`
+	CookingTime       string      `json:"CookingTime"`
+	Size              string      `json:"Size"`
+	ServeTime         time.Time   `json:"ServeTime"`
+	Name              string      `json:"Name"`
+	Product           string      `json:"Product"`
+	Comment           interface{} `json:"Comment"`
+	Status            string      `json:"Status"`
+	//Course             int           `json:"Course"`
+	Modifiers  interface{} `json:"Modifiers"`
+	IsCompound bool        `json:"IsCompound"`
+	//PrimaryComponent   string   `json:"PrimaryComponent"`
+	//SecondaryComponent string   `json:"SecondaryComponent"`
+	//Template           string   `json:"Template"`
 }
 type IIKOOrderInformationFull struct {
-	ID                   string      `json:"Id"`
-	Number               int         `json:"Number"`
-	Status               int         `json:"Status"`
-	FullSum              float64     `json:"FullSum"`
-	ResultSum            float64     `json:"ResultSum"`
-	OriginName           interface{} `json:"OriginName"`
-	IsBanquetOrder       bool        `json:"IsBanquetOrder"`
-	OpenTime             time.Time   `json:"OpenTime"`
-	BillTime             time.Time   `json:"BillTime"`
-	ProcessedPaymentsSum float64     `json:"ProcessedPaymentsSum"`
-	WaiterName           string      `json:"WaiterName"`
-	CashierName          string      `json:"CashierName"`
-	TableNum             int         `json:"TableNum"`
-	Waiter               string      `json:"Waiter"`
-	Cashier              string      `json:"Cashier"`
-	Table                string      `json:"Table"`
-	Guests               []struct {
+	ID                   string  `json:"Id"`
+	Number               int     `json:"Number"`
+	Status               string  `json:"Status"`
+	FullSum              float64 `json:"FullSum"`
+	ProcessedPaymentsSum float64 `json:"ProcessedPaymentsSum"`
+	ResultSum            float64 `json:"ResultSum"`
+	//OriginName           interface{} `json:"OriginName"`
+	IsBanquetOrder bool      `json:"IsBanquetOrder"`
+	OpenTime       time.Time `json:"OpenTime"`
+	BillTime       time.Time `json:"BillTime"`
+	WaiterName     string    `json:"WaiterName"`
+	CashierName    string    `json:"CashierName"`
+	TableNum       int       `json:"TableNum"`
+	Waiter         string    `json:"Waiter"`
+	Cashier        string    `json:"Cashier"`
+	Table          string    `json:"Table"`
+	Guests         []struct {
 		ID    string                      `json:"Id"`
 		Rank  int                         `json:"Rank"`
 		Name  string                      `json:"Name"`
-		Items []IIKOOrderInformationSmall `json:"Items"`
+		Items []IIKOOrderInformationItems `json:"Items"`
 	} `json:"Guests"`
-	IsDeliveryOrder  bool          `json:"IsDeliveryOrder"`
-	Customers        []interface{} `json:"Customers"`
-	Delivery         interface{}   `json:"Delivery"`
-	OrderType        string        `json:"OrderType"`
-	OrderServiceType int           `json:"OrderServiceType"`
-	URL              string        `json:"Url"`
+	//IsDeliveryOrder  bool          `json:"IsDeliveryOrder"`
+	//Customers        []interface{} `json:"Customers"`
+	//Delivery         interface{}   `json:"Delivery"`
+	//OrderType        string        `json:"OrderType"`
+	//OrderServiceType string           `json:"OrderServiceType"`
+	//URL              string        `json:"Url"`
 }
 
-func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult []IIKOOrderInformationSmall) {
+func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult IIKOOrderInformationSmall) {
 
-	var items []IIKOOrderInformationSmall
+	var items []IIKOOrderInformationItems
 	var IIKOOrderInfo []IIKOOrderInformationFull
+	fmt.Println(input)
 	err := json.Unmarshal([]byte(input), &IIKOOrderInfo)
 	if err != nil {
-		return nil
+		fmt.Println(err)
+		return itemsResult
+	}
+	err = json.Unmarshal([]byte(input), &itemsResult)
+	if err != nil {
+		fmt.Println(err)
+		return itemsResult
 	}
 	if len(IIKOOrderInfo) > 0 {
 		for i, _ := range IIKOOrderInfo {
@@ -84,7 +110,7 @@ func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult []IIKOOrderInfor
 			}
 		}
 	}
-	itemsResult = items
+	itemsResult.Items = items
 	return itemsResult
 
 }
