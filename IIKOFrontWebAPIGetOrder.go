@@ -138,7 +138,7 @@ func UnlockLicense(key string) {
 		panic(errors.New("НЕ УДАЛОСЬ ЗАКРЫТЬ КЛЮЧ ДЛЯ IIKO FRONT ПРИ ВОЗНИКНОВЕНИИ ДАЛЬНЕЙШИХ ОШИБОК ПЕРЕЗАПУСТИТЕ КАССУ"))
 	}
 }
-func GetOrderInfo(showNewOrder bool) (orderInfo []IIKOOrderInformationSmall) {
+func GetOrderInfo(showNewOrder bool) (orderInfo IIKOOrderInformationSmall) {
 	url := HOST + "/api/login/2050"
 	method := "GET"
 
