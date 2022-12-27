@@ -89,7 +89,6 @@ type IIKOOrderInformationFull struct {
 func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult []IIKOOrderInformationSmall) {
 
 	var IIKOOrderInfo []IIKOOrderInformationFull
-	fmt.Println(input)
 	err := json.Unmarshal([]byte(input), &IIKOOrderInfo)
 	if err != nil {
 		log.Println(err)
