@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -85,32 +86,32 @@ type IIKOOrderInformationFull struct {
 	//URL              string        `json:"Url"`
 }
 
-func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult IIKOOrderInformationSmall) {
+func ConvertFullIIKOOrderInfoToSmall(input string) (itemsResult []IIKOOrderInformationSmall) {
 
-	var items []IIKOOrderInformationItems
 	var IIKOOrderInfo []IIKOOrderInformationFull
 	fmt.Println(input)
 	err := json.Unmarshal([]byte(input), &IIKOOrderInfo)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return itemsResult
 	}
 	err = json.Unmarshal([]byte(input), &itemsResult)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return itemsResult
 	}
 	if len(IIKOOrderInfo) > 0 {
 		for i, _ := range IIKOOrderInfo {
 			for ii, _ := range IIKOOrderInfo[i].Guests {
+				var items []IIKOOrderInformationItems
 				for _, ccc := range IIKOOrderInfo[i].Guests[ii].Items {
 					ccc.Product = ""
 					items = append(items, ccc)
 				}
+				itemsResult[i].Items = items
 			}
 		}
 	}
-	itemsResult.Items = items
 	return itemsResult
 
 }
@@ -138,7 +139,7 @@ func UnlockLicense(key string) {
 		panic(errors.New("НЕ УДАЛОСЬ ЗАКРЫТЬ КЛЮЧ ДЛЯ IIKO FRONT ПРИ ВОЗНИКНОВЕНИИ ДАЛЬНЕЙШИХ ОШИБОК ПЕРЕЗАПУСТИТЕ КАССУ"))
 	}
 }
-func GetOrderInfo(showNewOrder bool) (orderInfo IIKOOrderInformationSmall) {
+func GetOrderInfo(showNewOrder bool) (orderInfo []IIKOOrderInformationSmall) {
 	url := HOST + "/api/login/2050"
 	method := "GET"
 
