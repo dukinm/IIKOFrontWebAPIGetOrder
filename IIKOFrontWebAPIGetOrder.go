@@ -46,7 +46,7 @@ type IIKOOrderInformationItems struct {
 	Name              string      `json:"Name"`
 	Product           string      `json:"Product"`
 	Comment           interface{} `json:"Comment"`
-	Status            string      `json:"Status"`
+	Status            string      `json:"Status,string"`
 	//Course             int           `json:"Course"`
 	Modifiers  interface{} `json:"Modifiers"`
 	IsCompound bool        `json:"IsCompound"`
@@ -57,7 +57,7 @@ type IIKOOrderInformationItems struct {
 type IIKOOrderInformationFull struct {
 	ID                   string  `json:"Id"`
 	Number               int     `json:"Number"`
-	Status               string  `json:"Status"`
+	Status               string  `json:"Status,string"`
 	FullSum              float64 `json:"FullSum"`
 	ProcessedPaymentsSum float64 `json:"ProcessedPaymentsSum"`
 	ResultSum            float64 `json:"ResultSum"`
