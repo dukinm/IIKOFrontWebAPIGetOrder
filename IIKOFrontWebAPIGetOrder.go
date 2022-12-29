@@ -16,7 +16,7 @@ const TIMEOUT = 9 * time.Second
 type IIKOOrderInformationSmall struct {
 	ID                   string                      `json:"Id"`
 	Number               int                         `json:"Number"`
-	Status               string                      `json:"Status"`
+	Status               json.RawMessage             `json:"Status,string"`
 	FullSum              float64                     `json:"FullSum"`
 	ProcessedPaymentsSum float64                     `json:"ProcessedPaymentsSum"`
 	ResultSum            float64                     `json:"ResultSum"`
