@@ -32,21 +32,21 @@ type IIKOOrderInformationSmall struct {
 	Items                []IIKOOrderInformationItems `json:"Items"`
 }
 type IIKOOrderInformationItems struct {
-	ID                string      `json:"Id"`
-	Amount            float64     `json:"Amount"`
-	Price             float64     `json:"Price"`
-	Cost              float64     `json:"Cost"`
-	Deleted           bool        `json:"Deleted"`
-	PrintTime         time.Time   `json:"PrintTime"`
-	CookingStartTime  time.Time   `json:"CookingStartTime"`
-	CookingFinishTime time.Time   `json:"CookingFinishTime"`
-	CookingTime       string      `json:"CookingTime"`
-	Size              string      `json:"Size"`
-	ServeTime         time.Time   `json:"ServeTime"`
-	Name              string      `json:"Name"`
-	Product           string      `json:"Product"`
-	Comment           interface{} `json:"Comment"`
-	Status            string      `json:"Status,string"`
+	ID                string          `json:"Id"`
+	Amount            float64         `json:"Amount"`
+	Price             float64         `json:"Price"`
+	Cost              float64         `json:"Cost"`
+	Deleted           bool            `json:"Deleted"`
+	PrintTime         time.Time       `json:"PrintTime"`
+	CookingStartTime  time.Time       `json:"CookingStartTime"`
+	CookingFinishTime time.Time       `json:"CookingFinishTime"`
+	CookingTime       string          `json:"CookingTime"`
+	Size              string          `json:"Size"`
+	ServeTime         time.Time       `json:"ServeTime"`
+	Name              string          `json:"Name"`
+	Product           string          `json:"Product"`
+	Comment           interface{}     `json:"Comment"`
+	Status            json.RawMessage `json:"Status"`
 	//Course             int           `json:"Course"`
 	Modifiers  interface{} `json:"Modifiers"`
 	IsCompound bool        `json:"IsCompound"`
@@ -55,12 +55,12 @@ type IIKOOrderInformationItems struct {
 	//Template           string   `json:"Template"`
 }
 type IIKOOrderInformationFull struct {
-	ID                   string  `json:"Id"`
-	Number               int     `json:"Number"`
-	Status               string  `json:"Status,string"`
-	FullSum              float64 `json:"FullSum"`
-	ProcessedPaymentsSum float64 `json:"ProcessedPaymentsSum"`
-	ResultSum            float64 `json:"ResultSum"`
+	ID                   string          `json:"Id"`
+	Number               int             `json:"Number"`
+	Status               json.RawMessage `json:"Status"`
+	FullSum              float64         `json:"FullSum"`
+	ProcessedPaymentsSum float64         `json:"ProcessedPaymentsSum"`
+	ResultSum            float64         `json:"ResultSum"`
 	//OriginName           interface{} `json:"OriginName"`
 	IsBanquetOrder bool      `json:"IsBanquetOrder"`
 	OpenTime       time.Time `json:"OpenTime"`
